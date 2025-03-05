@@ -43,6 +43,7 @@
 package leetcode
 
 import (
+	"strconv"
 	"testing"
 )
 
@@ -59,19 +60,24 @@ func TestAddTwoNumbers(t *testing.T) {
 			&ListNode{Val: 5, Next: &ListNode{Val: 6, Next: &ListNode{Val: 4, Next: nil}}},
 			&ListNode{Val: 7, Next: &ListNode{Val: 0, Next: &ListNode{Val: 8, Next: nil}}},
 		}, {
-			"1",
-			&ListNode{Val: 2, Next: &ListNode{Val: 4, Next: &ListNode{Val: 3, Next: nil}}},
-			&ListNode{Val: 5, Next: &ListNode{Val: 6, Next: &ListNode{Val: 4, Next: nil}}},
-			&ListNode{Val: 7, Next: &ListNode{Val: 0, Next: &ListNode{Val: 8, Next: nil}}},
+			"2",
+			&ListNode{Val: 0, Next: nil},
+			&ListNode{Val: 0, Next: nil},
+			&ListNode{Val: 0, Next: nil},
+		}, {
+			"3",
+			&ListNode{Val: 9, Next: &ListNode{Val: 9, Next: &ListNode{Val: 9, Next: &ListNode{Val: 9, Next: &ListNode{Val: 9, Next: &ListNode{Val: 9, Next: &ListNode{Val: 9, Next: nil}}}}}}},
+			&ListNode{Val: 9, Next: &ListNode{Val: 9, Next: &ListNode{Val: 9, Next: &ListNode{Val: 9, Next: nil}}}},
+			&ListNode{Val: 8, Next: &ListNode{Val: 9, Next: &ListNode{Val: 9, Next: &ListNode{Val: 9, Next: &ListNode{Val: 0, Next: &ListNode{Val: 0, Next: &ListNode{Val: 0, Next: &ListNode{Val: 1, Next: nil}}}}}}}},
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.Case, func(t *testing.T) {
-			if output := addTwoNumbers(c.Input); output != c.Output {
-				t.Fatalf("测试用例%v不通过，期望：%v，得到：%v", c.Case, c.Output, output)
+			if output := addTwoNumbers(c.Input1, c.Input2); output.ToString() != c.Output.ToString() {
+				t.Fatalf("测试用例%v不通过，期望：%v，得到：%v", c.Case, c.Output.ToString(), output.ToString())
 			} else {
-				t.Logf("测试用例%v通过了，期望：%v，得到：%v", c.Case, c.Output, output)
+				t.Logf("测试用例%v通过了，期望：%v，得到：%v", c.Case, c.Output.ToString(), output.ToString())
 			}
 		})
 	}
@@ -80,6 +86,14 @@ func TestAddTwoNumbers(t *testing.T) {
 type ListNode struct {
 	Val  int
 	Next *ListNode
+}
+
+func (l *ListNode) ToString() string {
+	if l.Next == nil {
+		return strconv.Itoa(l.Val)
+	} else {
+		return strconv.Itoa(l.Val) + l.Next.ToString()
+	}
 }
 
 //leetcode submit region begin(Prohibit modification and deletion)
@@ -91,6 +105,29 @@ type ListNode struct {
  * }
  */
 func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
+	if l1.Val+l2.Val >= 10 {
+		if l1.Next == nil && l2.Next == nil {
+			return &ListNode{Val: (l1.Val + l2.Val) % 10, Next: &ListNode{Val: (l1.Val + l2.Val) / 10, Next: nil}}
+		}
+		if l1.Next == nil {
+			return &ListNode{Val: (l1.Val + l2.Val) % 10, Next: addTwoNumbers(l2.Next, &ListNode{Val: (l1.Val + l2.Val) / 10, Next: nil})}
+		}
+		if l2.Next == nil {
+			return &ListNode{Val: (l1.Val + l2.Val) % 10, Next: addTwoNumbers(l1.Next, &ListNode{Val: (l1.Val + l2.Val) / 10, Next: nil})}
+		}
+		return &ListNode{Val: (l1.Val + l2.Val) % 10, Next: addTwoNumbers(addTwoNumbers(l1.Next, l2.Next), &ListNode{Val: (l1.Val + l2.Val) / 10, Next: nil})}
+	} else {
+		if l1.Next == nil && l2.Next == nil {
+			return &ListNode{Val: l1.Val + l2.Val, Next: nil}
+		}
+		if l1.Next == nil {
+			return &ListNode{Val: l1.Val + l2.Val, Next: l2.Next}
+		}
+		if l2.Next == nil {
+			return &ListNode{Val: l1.Val + l2.Val, Next: l1.Next}
+		}
+		return &ListNode{Val: l1.Val + l2.Val, Next: addTwoNumbers(l1.Next, l2.Next)}
+	}
 
 }
 
