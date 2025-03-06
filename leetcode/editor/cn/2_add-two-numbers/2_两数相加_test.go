@@ -105,30 +105,20 @@ func (l *ListNode) ToString() string {
  * }
  */
 func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
+	if l1 == nil && l2 == nil {
+		return nil
+	}
+	if l1 == nil {
+		return l2
+	}
+	if l2 == nil {
+		return l1
+	}
 	if l1.Val+l2.Val >= 10 {
-		if l1.Next == nil && l2.Next == nil {
-			return &ListNode{Val: (l1.Val + l2.Val) % 10, Next: &ListNode{Val: (l1.Val + l2.Val) / 10, Next: nil}}
-		}
-		if l1.Next == nil {
-			return &ListNode{Val: (l1.Val + l2.Val) % 10, Next: addTwoNumbers(l2.Next, &ListNode{Val: (l1.Val + l2.Val) / 10, Next: nil})}
-		}
-		if l2.Next == nil {
-			return &ListNode{Val: (l1.Val + l2.Val) % 10, Next: addTwoNumbers(l1.Next, &ListNode{Val: (l1.Val + l2.Val) / 10, Next: nil})}
-		}
-		return &ListNode{Val: (l1.Val + l2.Val) % 10, Next: addTwoNumbers(addTwoNumbers(l1.Next, l2.Next), &ListNode{Val: (l1.Val + l2.Val) / 10, Next: nil})}
+		return &ListNode{Val: (l1.Val + l2.Val) % 10, Next: addTwoNumbers(addTwoNumbers(l1.Next, l2.Next), &ListNode{Val: 1, Next: nil})}
 	} else {
-		if l1.Next == nil && l2.Next == nil {
-			return &ListNode{Val: l1.Val + l2.Val, Next: nil}
-		}
-		if l1.Next == nil {
-			return &ListNode{Val: l1.Val + l2.Val, Next: l2.Next}
-		}
-		if l2.Next == nil {
-			return &ListNode{Val: l1.Val + l2.Val, Next: l1.Next}
-		}
 		return &ListNode{Val: l1.Val + l2.Val, Next: addTwoNumbers(l1.Next, l2.Next)}
 	}
-
 }
 
 //leetcode submit region end(Prohibit modification and deletion)
